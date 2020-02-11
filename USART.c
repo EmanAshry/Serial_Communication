@@ -7,7 +7,8 @@
 
 #include "USART.h"
 
-#define BAUD_PRESCALE (((F_CPU / (USART_BAUDRATE * 8UL))) - 1)
+/*Baud prescale for no double speed*/
+#define BAUD_PRESCALE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
 /*******************************************************************************
  *                      Functions Definitions                                  *
@@ -15,20 +16,29 @@
 
 void USART_init(USART_Config * UART_config)
 {
+	/*To set the last bit at Register C*/
+	uint8_t UCSRC_URSEL_Value= 128;
+
+	/ * U2X for transmission speed * /	
 	UCSRA.B.U2X1 = UART_config->Speed;
+
+	/ ************************** UCSRB Description **************************
+	 * RXEN  = 1 Receiver Enable
+	 * TXEN  = 1 Transmitter Enable
+	 *********************************************************************** /
 	UCSRB.UCSRB_ST.TXEN1 = UART_config->Tx_enable;
 	UCSRB.UCSRB_ST.RXEN1 = UART_config->Rx_enable;
-	UCSRB.UCSRB_ST.UCSZ21 = ((UART_config->DataSize)>>2);
 	
-        /*The URSEL must be one when writing the UCSRC*/
-	UCSRC.UCSRC_ST.URSEL1 = 1;
+	/ ************************** UCSRC Description **************************
+	 * URSEL   = 1 The URSEL must be one when writing the UCSRC
+	 * UMSEL   = Asynch/Synch Operation
+	 * UPM1:0  = parity bit
+	 * USBS    = stop bit
+	 * UCSZ1:0 = data size
+	 *********************************************************************** / 
+	UCSRC.UCSRC_B = UCSRC_URSEL_Value|(UART_config->Parity)|(UART_config->Stop)|(UART_config->Mode)|(UART_config->DataSize); 
 	
-	UCSRC.UCSRC_ST.UPM = UART_config->Parity;
-	UCSRC.UCSRC_ST.USBS1 = UART_config->Stop;
-	UCSRC.UCSRC_ST.UMSEL1 = UART_config->Mode;
-	UCSRC.UCSRC_ST.UCSZ = UART_config->DataSize;
-	
-	
+	/ * First 8 bits from the BAUD_PRESCALE inside UBRRL and last 4 bits in UBRRH* /
 	UBRRH = BAUD_PRESCALE>>8;
 	UBRRL = BAUD_PRESCALE;
 	

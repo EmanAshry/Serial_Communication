@@ -31,22 +31,21 @@ typedef struct usart_config{
 
 /* UART Driver Baud Rate */
 #define USART_BAUDRATE 9600
-#define F_CPU 1000000UL
+#define F_CPU 16000000UL
 
 #define DOUBLE_SPEED			1
 #define NO_DOUBLE_SPEED			0
-#define SYNCH					1
+#define SYNCH					(1<<6)
 #define ASYNCH					0
 #define PARITY_DISABLE			0
-#define PARITY_EVEN				2
-#define PARITY_ODD				3
+#define PARITY_EVEN				(1<<5)
+#define PARITY_ODD				((1<<5)|(1<<4))
 #define STOP_1BIT				0
-#define STOP_2BIT				1
+#define STOP_2BIT				(1<<3)
 #define DATA_SIZE_5				0
 #define DATA_SIZE_6				1
 #define DATA_SIZE_7				2
-#define DATA_SIZE_8				3
-#define DATA_SIZE_9				7
+#define DATA_SIZE_8				((1<<1)|(1<<2))
 #define CLOCK_POL_FALLING		0
 #define CLOCK_POL_RISING		1
 #define TX_ENABLE				1
@@ -68,7 +67,6 @@ typedef struct usart_config{
 /*******************************************************************************
  *                      Functions Prototypes                                   *
  *******************************************************************************/
-extern void UART_init(void);
 
 extern void USART_init(USART_Config * UART_config);
 

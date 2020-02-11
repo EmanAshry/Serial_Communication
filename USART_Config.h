@@ -16,9 +16,8 @@
 #define UDR     *((reg_type8_t)(0X2C))
 
 /*bitfields*/
-
 #define UCSRB   (*(volatile UCSRB_Reg*)(0X2A))
-#define UCSRA   (*((volatile UCSRA_Reg*)0X2B))
+#define UCSRA   (*(volatile UCSRA_Reg*)(0X2B))
 #define UCSRC	(*(volatile UCSRC_Reg*)(0X40))
 
 
